@@ -1,0 +1,1 @@
+ sudo service mysqld restart && sudo service nginx restart
