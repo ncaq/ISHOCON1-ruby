@@ -80,6 +80,7 @@ class Ishocon1::WebApp < Sinatra::Base
     def create_comment(product_id, user_id, content)
       db.xquery('INSERT INTO comments (product_id, user_id, content, created_at) VALUES (?, ?, ?, ?)', \
                 product_id, user_id, content, time_now_db)
+      db.xquery('UPDATE products SET comment_size = comment_size + 1 WHERE id = ?', product_id)
     end
   end
 
@@ -121,9 +122,8 @@ WHERE c.product_id = ?
 ORDER BY c.created_at DESC
 LIMIT 5
 SQL
-    cmt_count_query = 'SELECT count(*) as count FROM comments WHERE product_id = ?'
 
-    erb :index, locals: { products: products, cmt_query: cmt_query, cmt_count_query: cmt_count_query }
+    erb :index, locals: { products: products, cmt_query: cmt_query }
   end
 
   get '/users/:user_id' do
