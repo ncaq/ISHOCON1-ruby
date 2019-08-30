@@ -38,7 +38,7 @@ class Ishocon1::WebApp < Sinatra::Base
         database: config[:db][:database],
         reconnect: true
       )
-      client.query_options.merge!(symbolize_keys: true)
+      client.query_options[:symbolize_keys] = true
       Thread.current[:ishocon1_db] = client
       client
     end
@@ -49,12 +49,12 @@ class Ishocon1::WebApp < Sinatra::Base
 
     def authenticate(email, password)
       user = db.xquery('SELECT * FROM users WHERE email = ?', email).first
-      fail Ishocon1::AuthenticationError unless user.nil? == false && user[:password] == password
+      raise Ishocon1::AuthenticationError unless user.nil? == false && user[:password] == password
       session[:user_id] = user[:id]
     end
 
     def authenticated!
-      fail Ishocon1::PermissionDenied unless current_user
+      raise Ishocon1::PermissionDenied unless current_user
     end
 
     def current_user
@@ -67,7 +67,7 @@ class Ishocon1::WebApp < Sinatra::Base
 
     def buy_product(product_id, user_id)
       db.xquery('INSERT INTO histories (product_id, user_id, created_at) VALUES (?, ?, ?)', \
-        product_id, user_id, time_now_db)
+                product_id, user_id, time_now_db)
     end
 
     def already_bought?(product_id)
@@ -79,7 +79,7 @@ class Ishocon1::WebApp < Sinatra::Base
 
     def create_comment(product_id, user_id, content)
       db.xquery('INSERT INTO comments (product_id, user_id, content, created_at) VALUES (?, ?, ?, ?)', \
-        product_id, user_id, content, time_now_db)
+                product_id, user_id, content, time_now_db)
     end
   end
 
@@ -169,6 +169,6 @@ SQL
     db.query('DELETE FROM products WHERE id > 10000')
     db.query('DELETE FROM comments WHERE id > 200000')
     db.query('DELETE FROM histories WHERE id > 500000')
-    "Finish"
+    'Finish'
   end
 end

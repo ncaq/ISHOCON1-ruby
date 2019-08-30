@@ -1,8 +1,8 @@
 source 'https://rubygems.org'
 
-gem 'sinatra'
+gem 'erubis'
+gem 'foreman'
 gem 'mysql2', '0.3.18'
 gem 'mysql2-cs-bind'
-gem 'erubis'
+gem 'sinatra'
 gem 'unicorn'
-gem 'foreman'
